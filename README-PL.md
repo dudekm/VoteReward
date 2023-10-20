@@ -2,13 +2,13 @@ Angielska wersja znajduje się [tutaj](README.md).
 
 # VoteReward
 
-VoteReward to plugin pod Spigot pozwalający na przyznawanie nagród graczom za głosowanie na serwer.
+VoteReward to plugin pod Spigot pozwalający na przyznawanie nagród graczom za głosowanie na serwer. Został stworzony pod wersje powyżej 1.13.
 
 # Instalacja
 
 Po pobraniu pliku `.jar`, należy umieścić go w folderze "plugins" w głównym katalogu serwera, a następnie zrestartować serwer. Po ponownym uruchomieniu powinien zostać utworzony folder "VoteReward" zawierający plik konfiguracyjny.
 
-Po otwarciu `settings.yml` należy skonfigurować serwery, na które mogą głosować gracze. W tym celu przechodzimy do sekcji `Servers`. Jej domyślna forma wygląda następująco:
+Teraz w `settings.yml` należy skonfigurować serwery, na które mogą głosować gracze. W tym celu przechodzimy do sekcji `Servers`. Jej domyślna forma wygląda następująco:
 
 ```yaml
 Servers:

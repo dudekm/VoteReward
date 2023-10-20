@@ -2,14 +2,13 @@ The Polish version can be found [here](README-PL.md).
 
 # VoteReward
 
-VoteReward is a Spigot plugin that allows you to award players rewards for voting on a server.
+VoteReward is a Spigot plugin that allows you to award players rewards for voting on a server. It was created for versions above 1.13.
 
 # Installation
 
 After downloading the `.jar` file, place it in the "plugins" folder in the main server directory and then restart the server. After restarting, a "VoteReward" folder should be created containing the configuration file.
 
-After opening `settings.yml`, you need to configure the servers that players can vote for. To do this, go to the `Servers` section. Its default form looks like this:
-
+Now in `settings.yml` you need to configure the servers that players can vote for. To do this, go to the `Servers` section. Its default form looks like this:
 ```yaml
 Servers:
   Server1:

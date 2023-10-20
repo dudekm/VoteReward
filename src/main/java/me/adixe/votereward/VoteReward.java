@@ -47,12 +47,17 @@ public class VoteReward extends JavaPlugin {
         PluginDescriptionFile description = getDescription();
 
         getLogger().info(description.getName() + " v" + description.getVersion() + " by " +
-                description.getAuthors().get(0) + " enabled.");
+                String.join(", ", description.getAuthors()) + " enabled.");
     }
 
     @Override
     public void onDisable() {
         saveData();
+
+        PluginDescriptionFile description = getDescription();
+
+        getLogger().info(description.getName() + " v" + description.getVersion() + " by " +
+                String.join(", ", description.getAuthors()) + " disabled.");
     }
 
     private void saveData() {
