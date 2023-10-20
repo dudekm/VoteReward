@@ -1,85 +1,34 @@
 #
 # VoteReward
-# Nagradzanie graczy za głosowanie na serwer.
+# Reward players for voting for the server.
 #
 # Spigot: Adixe
 # Discord: adixepl
+# GitHub: AdixePL
 #
 Servers:
-  #
-  # W tej sekcji należy zdefiniować wszystkie serwery, na które mogą głosować gracze.
-  #
-  # Konfiguracja odbywa się według szablonu:
-  # <nazwa serwera>:
-  #   Address: <adres>
-  #   Uuid: <id>
-  #   RewardCommands: [<lista komend>]
-  #
-  # <nazwa serwera>
-  # Może być użyta jako symbol zastępczy (placeholder) w komunikatach.
-  #
-  # <adres>
-  # Adres strony internetowej, na której został dodany serwer. Dostępne strony:
-  # - https://lista-serwerow.emecz.pl
-  # - https://lista-minecraft.pl
-  # - https://minecraft-list.info
-  #
-  # <id>
-  # ID serwera unikatowe tylko dla niego. Aby sprawdzić ID, należy wejść na stronę serwera
-  # i skopiować ostatni element adresu strony. Przykładowo, jeżeli adres strony to
-  # https://lista-minecraft.pl/serwery/minecraft/b23d452d-fbf1-47cf-a1d9-801a3e0bb516
-  # ID będzie równe b23d452d-fbf1-47cf-a1d9-801a3e0bb516.
-  #
-  # <lista komend>
-  # Komendy, które zostaną wysłane do konsoli serwera po pomyślnym zweryfikowaniu głosu.
-  # Dostępne placeholdery:
-  # - %sender% - nazwa gracza wysyłającego komendę
-  # - %server_name% - nazwa serwera
-  # - %server_address% - adres strony serwera
-  # - %server_uuid% - unikatowe ID serwera
-  #
-  Serwer 1:
+  Server1:
     Address: https://lista-minecraft.pl
     Uuid: b23d452d-fbf1-47cf-a1d9-801a3e0bb516
     RewardCommands:
-      - say %sender% zagłosował na serwer %server_name%
+      - xp add %sender% 100
       - give %sender% diamond
-  Serwer 2:
+  Server2:
     Address: https://lista-minecraft.pl
-    Uuid: 57bfb606-69e9-4f6f-9249-f4d727a9afcf
+    Uuid: a5a29c24-6514-472d-add0-0b2be060e277
     RewardCommands:
-      - say %sender% zagłosował na serwer %server_name%
+      - xp add %sender% 100
       - give %sender% emerald
 Commands:
-  #
-  # Komenda weryfikująca oddanie głosu.
-  #
-  # Możliwe sygnatury:
-  # - reward
-  # - vote
-  #
-  # Permisja: votereward.reward (domyślnie dostępna dla wszystkich graczy)
-  #
   Reward:
-    Header: '&aWeryfikowanie głosów...'
-    Success: '&e%server_name%: &aNagroda została przyznana.'
-    NotFound: '&e%server_name%: &cNie znaleziono głosu.'
-    AlreadyVoted: '&e%server_name%: &cNagroda została już przyznana.'
-    IOError: '&e%server_name%: &cWystąpił błąd IO.'
-    OnlyPlayer: '&cTa komenda może zostać wykonana przez gracza.'
-    NoPermission: '&cNie masz uprawnień na użycie tej komendy.'
-  #
-  # Komenda przeładowywująca ten plik konfiguracyjny.
-  #
-  # Możliwe sygnatury:
-  # - reload
-  # - rel
-  # - vrreload
-  # - vrrel
-  #
-  # Permisja: votereward.reload (domyślnie dostępna tylko dla operatorów)
-  #
+    Header: '&aVerifying votes...'
+    Success: '&e%server_name%: &aReward has been awarded.'
+    NotFound: '&e%server_name%: &cNo vote found.'
+    AlreadyVoted: '&e%server_name%: &cReward has been awarded already.'
+    IOError: '&e%server_name%: &cAn IO error occurred.'
+    OnlyPlayer: '&cThis command can be executed by the player.'
+    NoPermission: '&cYou do not have permission to use this command.'
   Reload:
-    Success: '&aPomyślnie przeładowano plik konfiguracyjny.'
-    IOError: '&cWystąpił błąd IO.'
-    NoPermission: '&cNie masz uprawnień na użycie tej komendy.'
+    Success: '&aConfiguration file successfully reloaded.'
+    IOError: '&cAn IO error occurred.'
+    NoPermission: '&cYou do not have permission to use this command.'

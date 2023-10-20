@@ -76,10 +76,10 @@ public class RewardCommand implements CommandExecutor {
                     Map<String, String> serverPlaceholders = new HashMap<>(placeholders);
                     serverPlaceholders.put("server_name", key);
                     serverPlaceholders.put("server_address", serverAddress);
-                    serverPlaceholders.put("server_uuid", serverAddress);
+                    serverPlaceholders.put("server_uuid", serverUuid);
 
                     if (!data.contains(playerSettingsPath) ||
-                            !data.getStringList(playerSettingsPath).contains(key)) {
+                            !data.getStringList(playerSettingsPath).contains(serverUuid)) {
                         try {
                             InputStream inputStream = new URL(serverAddress + "/votes/server/" + serverUuid).openStream();
 
@@ -114,7 +114,7 @@ public class RewardCommand implements CommandExecutor {
                                 if (data.contains(playerSettingsPath))
                                     votedServers.addAll(data.getStringList(playerSettingsPath));
 
-                                votedServers.add(key);
+                                votedServers.add(serverUuid);
 
                                 data.set(playerSettingsPath, votedServers);
 
