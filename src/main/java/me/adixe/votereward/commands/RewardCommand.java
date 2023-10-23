@@ -71,6 +71,10 @@ public class RewardCommand implements CommandExecutor {
                     String serverSettingsPath = "Servers." + key;
 
                     String serverAddress = settings.getString(serverSettingsPath + ".Address");
+
+                    if (!instance.isSupported(serverAddress))
+                        throw new IllegalArgumentException("Invalid address: " + serverAddress);
+
                     String serverUuid = settings.getString(serverSettingsPath + ".Uuid");
 
                     Map<String, String> serverPlaceholders = new HashMap<>(placeholders);
