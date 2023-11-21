@@ -42,4 +42,4 @@ The values "Server1" or "Server2" can be anything - they are just names.
 - `%server_address%` - server page address,
 - `%server_uuid%` - unique server ID.
 
-If the plugin has been configured correctly, after voting, the player can use the `/reward` or `/vote` command to receive the vote reward.
+If the plugin has been configured correctly, after voting, the player can use the `/votereward` command to receive the vote reward.

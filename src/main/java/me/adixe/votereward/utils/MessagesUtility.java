@@ -8,28 +8,20 @@ import org.bukkit.command.CommandSender;
 import java.util.Map;
 
 public class MessagesUtility {
-    private final VoteReward instance;
+    public void sendMessage(CommandSender recipient, String settingsPath, Map<String, String> placeholders) {
+        VoteReward voteReward = VoteReward.getInstance();
 
-    public MessagesUtility(VoteReward instance) {
-        this.instance = instance;
-    }
+        String message = voteReward.getConfiguration()
+                .get("settings").getString(settingsPath);
 
-    public void sendMessage(CommandSender recipient, String messageSettingsPath, Map<String, String> placeholders) {
-        String message = instance.getConfiguration()
-                .get("settings").getString(messageSettingsPath);
+        if (message == null)
+            throw new NullPointerException("No value found for \"" + settingsPath + "\"");
 
         if (message.isEmpty())
             return;
 
         recipient.spigot().sendMessage(TextComponent.fromLegacyText(
                 ChatColor.translateAlternateColorCodes('&',
-                        includePlaceholders(message, placeholders))));
-    }
-
-    public String includePlaceholders(String text, Map<String, String> placeholders) {
-        for (Map.Entry<String, String> entry : placeholders.entrySet())
-            text = text.replace("%" + entry.getKey() + "%", entry.getValue());
-
-        return text;
+                        voteReward.getPlaceholdersProvider().translate(message, placeholders))));
     }
 }

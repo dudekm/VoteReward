@@ -2,6 +2,8 @@
 # VoteReward
 # Reward players for voting for the server.
 #
+# Source code and documentation: https://github.com/dudekm/VoteReward
+#
 # Spigot: Adixe
 # Discord: adixepl
 # GitHub: AdixePL
@@ -20,15 +22,26 @@ Servers:
       - xp add %sender% 100
       - give %sender% emerald
 Commands:
+  UnknownCommand: '&cCommand %trigger% was not found.'
+  Check:
+    Header: '&aVerifying votes of %player_name%...'
+    Success: '&e%server_name%: &aVote has been granted.'
+    NotFound: '&e%server_name%: &cNo vote found.'
+    ExceptionCaught: '&e%server_name%: &cAn error occurred: %exception%.'
+    NoPlayerGiven: '&cNo player given.'
+    PlayerNotFound: '&cPlayer "%player%" was not found.'
+    NoPermission: '&cYou do not have permission to use this command.'
+    InvalidUsage: '&cUse the correct syntax: %usage%.'
   Reward:
     Header: '&aVerifying votes...'
     Success: '&e%server_name%: &aReward has been awarded.'
     NotFound: '&e%server_name%: &cNo vote found.'
     AlreadyVoted: '&e%server_name%: &cReward has been awarded already.'
-    IOError: '&e%server_name%: &cAn IO error occurred.'
+    ExceptionCaught: '&e%server_name%: &cAn error occurred: %exception%.'
     OnlyPlayer: '&cThis command can be executed by the player.'
     NoPermission: '&cYou do not have permission to use this command.'
+    InvalidUsage: '&cUse the correct syntax: %usage%.'
   Reload:
     Success: '&aConfiguration file successfully reloaded.'
-    IOError: '&cAn IO error occurred.'
     NoPermission: '&cYou do not have permission to use this command.'
+    InvalidUsage: '&cUse the correct syntax: %usage%.'
