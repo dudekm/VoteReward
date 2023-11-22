@@ -15,24 +15,20 @@ public class Configuration {
     private final List<String> configurations = new ArrayList<>();
     private final Map<String, YamlFile> configurationFiles = new HashMap<>();
 
-    private final VoteReward instance;
-
-    public Configuration(VoteReward instance) {
-        this.instance = instance;
-    }
-
     public void register(String configurationName) {
         configurations.add(configurationName);
     }
 
     public void load() {
         try {
+            VoteReward voteReward = VoteReward.getInstance();
+
             for (String configurationName : configurations) {
-                File file = new File(instance.getDataFolder(), configurationName + ".yml");
+                File file = new File(voteReward.getDataFolder(), configurationName + ".yml");
 
                 if (!file.exists()) {
                     Files.createDirectories(file.getParentFile().toPath());
-                    Files.copy(instance.getResource(configurationName + ".yml"), file.toPath());
+                    Files.copy(voteReward.getResource(configurationName + ".yml"), file.toPath());
                 }
 
                 YamlFile yamlFile = YamlFile.loadConfiguration(file, true);

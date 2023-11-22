@@ -1,20 +1,17 @@
 name: VoteReward
 main: me.adixe.votereward.VoteReward
-version: 1.1
+version: 2.0
 api-version: 1.13
 author: Adixe
 description: Reward players for voting for the server.
 commands:
-  reward:
+  votereward:
     aliases:
-      - vote
-  reload:
-    aliases:
-      - rel
-      - vrreload
-      - vrrel
+      - vr
 permissions:
   votereward.reward:
     default: true
+  votereward.check:
+    default: op
   votereward.reload:
     default: op

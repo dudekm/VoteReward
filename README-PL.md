@@ -43,4 +43,4 @@ Wartości "Server1" czy "Server2" mogą być czymkolwiek - są to tylko nazwy.
 - `%server_address%` - adres strony serwera,
 - `%server_uuid%` - unikatowe ID serwera.
 
-Jeżeli plugin został poprawnie skonfigurowany, gracz po oddaniu głosu może użyć komendy `/reward` lub `/vote`, aby otrzymać nagrodę za głosowanie.
+Jeżeli plugin został poprawnie skonfigurowany, gracz po oddaniu głosu może użyć komendy `/votereward`, aby otrzymać nagrodę za głosowanie.
