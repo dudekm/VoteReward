@@ -18,14 +18,14 @@ Servers:
     Address: https://lista-serwerow.emecz.pl
     Uuid: b23d452d-fbf1-47cf-a1d9-801a3e0bb516
     RewardCommands:
-      - xp add %sender% 100
-      - give %sender% diamond
+      - xp add %player_name% 100
+      - give %player_name% diamond
   Server2:
     Address: https://lista-minecraft.pl
     Uuid: a5a29c24-6514-472d-add0-0b2be060e277
     RewardCommands:
-      - xp add %sender% 100
-      - give %sender% emerald
+      - xp add %player_name% 100
+      - give %player_name% emerald
 ```
 
 Wartości "Server1" czy "Server2" mogą być czymkolwiek - są to tylko nazwy.
@@ -38,7 +38,9 @@ Wartości "Server1" czy "Server2" mogą być czymkolwiek - są to tylko nazwy.
 `Uuid` oznacza unikatowe ID serwera przypisane wyłącznie do niego. Aby sprawdzić ID, należy wejść na stronę serwera i skopiować ostatni element adresu strony. Przykładowo, jeżeli wygląda on następująco: https://lista-minecraft.pl/serwery/minecraft/b23d452d-fbf1-47cf-a1d9-801a3e0bb516 - ID będzie równe `b23d452d-fbf1-47cf-a1d9-801a3e0bb516`.
 
 `RewardCommands` to lista komend, które zostaną wysłane do konsoli serwera po pomyślnym zweryfikowaniu głosu gracza. Dostępne są następujące symbole zastępcze (placeholdery):
-- `%sender%` - nazwa gracza wysyłającego komendę,
+- `%player_name%` - nazwa gracza,
+- `%player_display_name%` - wyświetlana nazwa gracza,
+- `%player_uuid%` - unikatowe ID gracza,
 - `%server_name%` - nazwa serwera,
 - `%server_address%` - adres strony serwera,
 - `%server_uuid%` - unikatowe ID serwera.

@@ -10,18 +10,15 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 public class VoteManager {
-    public boolean rewardPlayer(Player player, String server) {
-        VoteReward voteReward = VoteReward.getInstance();
-
-        Configuration configuration = voteReward.getConfiguration();
-
-        YamlFile settings = configuration.get("settings");
-        YamlFile data = configuration.get("data");
+    public static boolean rewardPlayer(Player player, String server) {
+        YamlFile settings = Configuration.get("settings");
+        YamlFile data = Configuration.get("data");
 
         String serverSettingsPath = "Servers." + server;
 
@@ -39,25 +36,23 @@ public class VoteManager {
 
         data.set(playerSettingsPath, alreadyVotedServers);
 
-        Bukkit.getScheduler().runTask(voteReward, () -> {
+        Bukkit.getScheduler().runTask(VoteReward.getInstance(), () -> {
             List<String> commands = settings.getStringList(serverSettingsPath + ".RewardCommands");
 
-            PlaceholdersProvider placeholdersProvider = voteReward.getPlaceholdersProvider();
-
-            Map<String, String> placeholders = placeholdersProvider.getPlayerDefault(player);
+            Map<String, String> placeholders = new HashMap<>();
+            placeholders.putAll(PlaceholdersProvider.getPlayerDefault(player));
+            placeholders.putAll(PlaceholdersProvider.getServerDefault(server));
 
             commands.forEach(command -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
-                    placeholdersProvider.translate(command, placeholders)));
+                    PlaceholdersProvider.translate(command, placeholders)));
         });
 
         return true;
     }
 
-    public void setup() {
-        VoteReward voteReward = VoteReward.getInstance();
-
-        Bukkit.getScheduler().runTaskTimerAsynchronously(voteReward, () -> {
-            YamlFile data = voteReward.getConfiguration().get("data");
+    public static void setup() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(VoteReward.getInstance(), () -> {
+            YamlFile data = Configuration.get("data");
 
             LocalDate timeNow = LocalDate.now(ZoneId.of("Europe/Paris"));
 
@@ -72,13 +67,11 @@ public class VoteManager {
         }, 0L, 20L * 60 * 10);
     }
 
-    public void saveData() {
-        VoteReward voteReward = VoteReward.getInstance();
-
+    public static void saveData() {
         try {
-            voteReward.getConfiguration().get("data").save();
+            Configuration.get("data").save();
         } catch (IOException exception) {
-            voteReward.getLogger().log(Level.SEVERE,
+            VoteReward.getInstance().getLogger().log(Level.SEVERE,
                     "An error occurred while trying to save data.", exception);
         }
     }

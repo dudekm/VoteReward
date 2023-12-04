@@ -2,6 +2,7 @@ package me.adixe.votereward.commands.executors;
 
 import me.adixe.votereward.VoteReward;
 import me.adixe.votereward.commands.CommandException;
+import me.adixe.votereward.utils.Configuration;
 import me.adixe.votereward.utils.PlaceholdersProvider;
 import me.adixe.votereward.utils.VoteManager;
 import me.adixe.votereward.voteverifier.VerificationListener;
@@ -27,25 +28,19 @@ public class RewardCommand extends CommandExecutor {
         if (!(sender instanceof Player))
             throw new CommandException("OnlyPlayer");
 
-        VoteReward voteReward = VoteReward.getInstance();
-
-        PlaceholdersProvider placeholdersProvider = voteReward.getPlaceholdersProvider();
-
-        VoteManager voteManager = voteReward.getVoteManager();
-
         sendMessage(sender, "Header");
 
-        YamlFile settings = voteReward.getConfiguration().get("settings");
+        YamlFile settings = Configuration.get("settings");
 
         for (String server : settings.getConfigurationSection("Servers").getKeys(false)) {
             VoteVerifier verifier = new VoteVerifier(server, sender.getName());
 
-            Map<String, String> serverPlaceholders = placeholdersProvider.getServerDefault(server);
+            Map<String, String> serverPlaceholders = PlaceholdersProvider.getServerDefault(server);
 
             verifier.verify(new VerificationListener() {
                 @Override
                 public void success() {
-                    if (voteManager.rewardPlayer((Player) sender, server))
+                    if (VoteManager.rewardPlayer((Player) sender, server))
                         sendMessage(sender, "Success", serverPlaceholders);
                     else
                         sendMessage(sender, "AlreadyVoted", serverPlaceholders);
@@ -63,7 +58,7 @@ public class RewardCommand extends CommandExecutor {
 
                     sendMessage(sender, "ExceptionCaught", exceptionPlaceholders);
 
-                    voteReward.getLogger().log(Level.SEVERE,
+                    VoteReward.getInstance().getLogger().log(Level.SEVERE,
                             "An error occurred while awarding reward.",
                             exception);
                 }

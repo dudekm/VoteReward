@@ -1,8 +1,9 @@
 package me.adixe.votereward.commands.executors;
 
-import me.adixe.votereward.VoteReward;
 import me.adixe.votereward.commands.CommandException;
 import me.adixe.votereward.commands.args.CommandArg;
+import me.adixe.votereward.utils.MessagesUtility;
+import me.adixe.votereward.utils.PlaceholdersProvider;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collections;
@@ -89,13 +90,12 @@ public abstract class CommandExecutor {
 
     protected void sendMessage(CommandSender recipient, String message,
                                Map<String, String> placeholders) {
-        VoteReward voteReward = VoteReward.getInstance();
-
         Map<String, String> newPlaceholders = new HashMap<>(placeholders);
-        newPlaceholders.putAll(voteReward.getPlaceholdersProvider().getCommandSenderDefault(recipient));
+        newPlaceholders.putAll(PlaceholdersProvider.getCommandSenderDefault(recipient));
 
-        voteReward.getMessagesUtility().sendMessage(recipient,
-                "Commands." + identifier + "." + message, newPlaceholders);
+        MessagesUtility.sendMessage(recipient,
+                "Commands." + identifier + "." + message,
+                newPlaceholders);
     }
 
     protected void sendMessage(CommandSender recipient, String message) {

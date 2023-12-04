@@ -1,7 +1,8 @@
 package me.adixe.votereward.commands;
 
-import me.adixe.votereward.VoteReward;
 import me.adixe.votereward.commands.executors.CommandExecutor;
+import me.adixe.votereward.utils.MessagesUtility;
+import me.adixe.votereward.utils.PlaceholdersProvider;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -31,12 +32,11 @@ public class CommandsService implements org.bukkit.command.CommandExecutor, TabC
                 return entry.getKey().execute(sender, input);
         }
 
-        Map<String, String> placeholders = new HashMap<>();
-        placeholders.put("sender", sender.getName());
+        Map<String, String> placeholders = new HashMap<>(
+                PlaceholdersProvider.getCommandSenderDefault(sender));
         placeholders.put("trigger", trigger);
 
-        VoteReward.getInstance().getMessagesUtility()
-                .sendMessage(sender, "Commands.UnknownCommand", placeholders);
+        MessagesUtility.sendMessage(sender, "Commands.UnknownCommand", placeholders);
 
         return false;
     }
