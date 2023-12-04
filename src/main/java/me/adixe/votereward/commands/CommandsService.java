@@ -5,7 +5,6 @@ import me.adixe.votereward.commands.executors.CommandExecutor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,8 +17,8 @@ public class CommandsService implements org.bukkit.command.CommandExecutor, TabC
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
-                             @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command,
+                             String label, String[] args) {
         List<String> input = new ArrayList<>(Arrays.asList(args));
 
         if (input.isEmpty())
@@ -43,8 +42,8 @@ public class CommandsService implements org.bukkit.command.CommandExecutor, TabC
     }
 
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command,
-                                      @NotNull String label, @NotNull String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command command,
+                                      String label, String[] args) {
         List<String> entries = new ArrayList<>();
 
         List<String> input = new ArrayList<>(Arrays.asList(args));
