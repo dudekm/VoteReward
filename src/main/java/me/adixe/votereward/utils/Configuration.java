@@ -12,18 +12,18 @@ import java.util.List;
 import java.util.Map;
 
 public class Configuration {
-    private final List<String> configurations = new ArrayList<>();
-    private final Map<String, YamlFile> configurationFiles = new HashMap<>();
+    private static final List<String> CONFIGURATIONS = new ArrayList<>();
+    private static final Map<String, YamlFile> CONFIGURATION_FILES = new HashMap<>();
 
-    public void register(String configurationName) {
-        configurations.add(configurationName);
+    public static void register(String configurationName) {
+        CONFIGURATIONS.add(configurationName);
     }
 
-    public void load() {
+    public static void load() {
         try {
             VoteReward voteReward = VoteReward.getInstance();
 
-            for (String configurationName : configurations) {
+            for (String configurationName : CONFIGURATIONS) {
                 File file = new File(voteReward.getDataFolder(), configurationName + ".yml");
 
                 if (!file.exists()) {
@@ -33,7 +33,7 @@ public class Configuration {
 
                 YamlFile yamlFile = YamlFile.loadConfiguration(file, true);
 
-                configurationFiles.put(configurationName, yamlFile);
+                CONFIGURATION_FILES.put(configurationName, yamlFile);
 
                 yamlFile.save();
             }
@@ -42,7 +42,12 @@ public class Configuration {
         }
     }
 
-    public YamlFile get(String configurationName) {
-        return configurationFiles.get(configurationName);
+    public static void dispose() {
+        CONFIGURATIONS.clear();
+        CONFIGURATION_FILES.clear();
+    }
+
+    public static YamlFile get(String configurationName) {
+        return CONFIGURATION_FILES.get(configurationName);
     }
 }

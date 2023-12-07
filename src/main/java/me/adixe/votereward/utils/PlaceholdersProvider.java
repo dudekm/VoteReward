@@ -1,6 +1,5 @@
 package me.adixe.votereward.utils;
 
-import me.adixe.votereward.VoteReward;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.simpleyaml.configuration.file.YamlFile;
@@ -10,14 +9,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlaceholdersProvider {
-    public String translate(String text, Map<String, String> placeholders) {
+    public static String translate(String text, Map<String, String> placeholders) {
         for (Map.Entry<String, String> entry : placeholders.entrySet())
             text = text.replace("%" + entry.getKey() + "%", entry.getValue());
 
         return text;
     }
 
-    public Map<String, String> getPlayerDefault(Player player) {
+    public static Map<String, String> getPlayerDefault(Player player) {
         Map<String, String> placeholders = new HashMap<>();
         placeholders.put("player_name", player.getName());
         placeholders.put("player_display_name", player.getDisplayName());
@@ -26,12 +25,12 @@ public class PlaceholdersProvider {
         return placeholders;
     }
 
-    public Map<String, String> getCommandSenderDefault(CommandSender sender) {
+    public static Map<String, String> getCommandSenderDefault(CommandSender sender) {
         return Collections.singletonMap("sender", sender.getName());
     }
 
-    public Map<String, String> getServerDefault(String server) {
-        YamlFile settings = VoteReward.getInstance().getConfiguration().get("settings");
+    public static Map<String, String> getServerDefault(String server) {
+        YamlFile settings = Configuration.get("settings");
 
         String serverSettingsPath = "Servers." + server;
 

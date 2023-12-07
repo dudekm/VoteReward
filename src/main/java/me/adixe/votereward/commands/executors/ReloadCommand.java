@@ -1,6 +1,6 @@
 package me.adixe.votereward.commands.executors;
 
-import me.adixe.votereward.VoteReward;
+import me.adixe.votereward.utils.Configuration;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collections;
@@ -15,7 +15,7 @@ public class ReloadCommand extends CommandExecutor {
 
     @Override
     protected void perform(CommandSender sender, Map<String, Object> argsValues) {
-        VoteReward.getInstance().getConfiguration().load();
+        Configuration.load();
 
         sendMessage(sender, "Success");
     }

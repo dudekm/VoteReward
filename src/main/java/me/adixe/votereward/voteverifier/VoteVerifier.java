@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.adixe.votereward.VoteReward;
+import me.adixe.votereward.utils.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.simpleyaml.configuration.file.YamlFile;
@@ -32,7 +33,7 @@ public class VoteVerifier {
         VoteReward voteReward = VoteReward.getInstance();
 
         scheduler.runTaskAsynchronously(voteReward, () -> {
-            YamlFile settings = voteReward.getConfiguration().get("settings");
+            YamlFile settings = Configuration.get("settings");
 
             try {
                 String serverSettingsPath = "Servers." + server;

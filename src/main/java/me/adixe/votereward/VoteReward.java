@@ -5,8 +5,6 @@ import me.adixe.votereward.commands.executors.CheckCommand;
 import me.adixe.votereward.commands.executors.ReloadCommand;
 import me.adixe.votereward.commands.executors.RewardCommand;
 import me.adixe.votereward.utils.Configuration;
-import me.adixe.votereward.utils.MessagesUtility;
-import me.adixe.votereward.utils.PlaceholdersProvider;
 import me.adixe.votereward.utils.VoteManager;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
@@ -20,26 +18,15 @@ import java.util.Map;
 public class VoteReward extends JavaPlugin {
     private static VoteReward instance;
 
-    private Configuration configuration;
-    private PlaceholdersProvider placeholdersProvider;
-    private VoteManager voteManager;
-    private MessagesUtility messagesUtility;
-
     @Override
     public void onEnable() {
         instance = this;
 
-        configuration = new Configuration();
-        configuration.register("settings");
-        configuration.register("data");
-        configuration.load();
+        Configuration.register("settings");
+        Configuration.register("data");
+        Configuration.load();
 
-        placeholdersProvider = new PlaceholdersProvider();
-
-        voteManager = new VoteManager();
-        voteManager.setup();
-
-        messagesUtility = new MessagesUtility();
+        VoteManager.setup();
 
         CommandsService commandsService = new CommandsService();
         commandsService.register(new RewardCommand(), "reward");
@@ -51,7 +38,7 @@ public class VoteReward extends JavaPlugin {
         Metrics metrics = new Metrics(this, 20120);
 
         metrics.addCustomChart(new AdvancedPie("siteAddress", () -> {
-            YamlFile settings = configuration.get("settings");
+            YamlFile settings = Configuration.get("settings");
 
             Map<String, Integer> map = new HashMap<>();
 
@@ -72,7 +59,8 @@ public class VoteReward extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        voteManager.saveData();
+        Configuration.dispose();
+        VoteManager.saveData();
 
         PluginDescriptionFile description = getDescription();
 
@@ -82,21 +70,5 @@ public class VoteReward extends JavaPlugin {
 
     public static VoteReward getInstance() {
         return instance;
-    }
-
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public PlaceholdersProvider getPlaceholdersProvider() {
-        return placeholdersProvider;
-    }
-
-    public VoteManager getVoteManager() {
-        return voteManager;
-    }
-
-    public MessagesUtility getMessagesUtility() {
-        return messagesUtility;
     }
 }
