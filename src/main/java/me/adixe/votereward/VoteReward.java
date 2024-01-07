@@ -4,8 +4,12 @@ import me.adixe.votereward.commands.CommandsService;
 import me.adixe.votereward.commands.executors.CheckCommand;
 import me.adixe.votereward.commands.executors.ReloadCommand;
 import me.adixe.votereward.commands.executors.RewardCommand;
-import me.adixe.votereward.utils.Configuration;
-import me.adixe.votereward.utils.VoteManager;
+import me.adixe.votereward.configuration.Configuration;
+import me.adixe.votereward.placeholders.PlaceholdersManager;
+import me.adixe.votereward.placeholders.providers.CommandSenderProvider;
+import me.adixe.votereward.placeholders.providers.PlayerProvider;
+import me.adixe.votereward.placeholders.providers.ServerProvider;
+import me.adixe.votereward.votemanager.VoteManager;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -16,39 +20,46 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class VoteReward extends JavaPlugin {
-    private static VoteReward instance;
+    private Configuration configuration;
+    private PlaceholdersManager placeholdersManager;
+    private VoteManager voteManager;
 
     @Override
     public void onEnable() {
-        instance = this;
+        configuration = new Configuration(this);
+        configuration.register("settings");
+        configuration.register("messages");
+        configuration.register("data");
 
-        Configuration.register("settings");
-        Configuration.register("data");
-        Configuration.load();
+        placeholdersManager = new PlaceholdersManager();
+        placeholdersManager.register(new CommandSenderProvider(this));
+        placeholdersManager.register(new PlayerProvider(this));
+        placeholdersManager.register(new ServerProvider(this));
 
-        VoteManager.setup();
+        voteManager = new VoteManager(this);
+        voteManager.autoSave();
 
-        CommandsService commandsService = new CommandsService();
-        commandsService.register(new RewardCommand(), "reward");
-        commandsService.register(new CheckCommand(), "check");
-        commandsService.register(new ReloadCommand(), "reload");
+        CommandsService commandsService = new CommandsService(this);
+        commandsService.register(new RewardCommand(this), "reward");
+        commandsService.register(new CheckCommand(this), "check");
+        commandsService.register(new ReloadCommand(this), "reload");
 
         getCommand("votereward").setExecutor(commandsService);
 
         Metrics metrics = new Metrics(this, 20120);
 
         metrics.addCustomChart(new AdvancedPie("siteAddress", () -> {
-            YamlFile settings = Configuration.get("settings");
+            YamlFile settings = configuration.get("settings");
 
-            Map<String, Integer> map = new HashMap<>();
+            Map<String, Integer> addresses = new HashMap<>();
 
-            for (String key : settings.getConfigurationSection("Servers").getKeys(false)) {
-                String address = settings.getString("Servers." + key + ".Address");
+            for (String serverKey : settings.getConfigurationSection("Servers").getKeys(false)) {
+                String address = settings.getString("Servers." + serverKey + ".Address");
 
-                map.put(address, map.getOrDefault(address, 0) + 1);
+                addresses.put(address, addresses.getOrDefault(address, 0) + 1);
             }
 
-            return map;
+            return addresses;
         }));
 
         PluginDescriptionFile description = getDescription();
@@ -59,8 +70,7 @@ public class VoteReward extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Configuration.dispose();
-        VoteManager.saveData();
+        voteManager.save();
 
         PluginDescriptionFile description = getDescription();
 
@@ -68,7 +78,15 @@ public class VoteReward extends JavaPlugin {
                 String.join(", ", description.getAuthors()) + " disabled.");
     }
 
-    public static VoteReward getInstance() {
-        return instance;
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public PlaceholdersManager getPlaceholdersManager() {
+        return placeholdersManager;
+    }
+
+    public VoteManager getVoteManager() {
+        return voteManager;
     }
 }

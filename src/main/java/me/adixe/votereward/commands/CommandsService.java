@@ -1,20 +1,27 @@
 package me.adixe.votereward.commands;
 
+import me.adixe.votereward.VoteReward;
 import me.adixe.votereward.commands.executors.CommandExecutor;
 import me.adixe.votereward.utils.MessagesUtility;
-import me.adixe.votereward.utils.PlaceholdersProvider;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CommandsService implements org.bukkit.command.CommandExecutor, TabCompleter {
-    private final Map<CommandExecutor, List<String>> commandExecutors = new LinkedHashMap<>();
+    private final VoteReward plugin;
+    private final Map<CommandExecutor, List<String>> commandExecutors;
 
-    public void register(CommandExecutor command, String... triggers) {
-        commandExecutors.put(command, Arrays.asList(triggers));
+    public CommandsService(VoteReward plugin) {
+        this.plugin = plugin;
+        this.commandExecutors = new LinkedHashMap<>();
+    }
+
+    public void register(CommandExecutor executor, String... triggers) {
+        commandExecutors.put(executor, Arrays.asList(triggers));
     }
 
     @Override
@@ -22,21 +29,29 @@ public class CommandsService implements org.bukkit.command.CommandExecutor, TabC
                              String label, String[] args) {
         List<String> input = new ArrayList<>(Arrays.asList(args));
 
-        if (input.isEmpty())
+        if (input.isEmpty()) {
             return commandExecutors.keySet().iterator().next().execute(sender, input);
+        }
 
         String trigger = input.remove(0);
 
-        for (Map.Entry<CommandExecutor, List<String>> entry : commandExecutors.entrySet()) {
-            if (entry.getValue().contains(trigger))
-                return entry.getKey().execute(sender, input);
+        Optional<CommandExecutor> optionalCommand = commandExecutors.entrySet().stream()
+                .filter(entry -> entry.getValue().contains(trigger))
+                .map(Map.Entry::getKey)
+                .findFirst();
+
+        if (optionalCommand.isPresent()) {
+            return optionalCommand.get().execute(sender, input);
         }
 
         Map<String, String> placeholders = new HashMap<>(
-                PlaceholdersProvider.getCommandSenderDefault(sender));
+                plugin.getPlaceholdersManager().get(CommandSender.class).getUnique(sender));
         placeholders.put("trigger", trigger);
 
-        MessagesUtility.sendMessage(sender, "Commands.UnknownCommand", placeholders);
+        MessagesUtility.sendMessage(sender,
+                plugin.getConfiguration().get("messages"),
+                "Commands.UnknownCommand",
+                placeholders);
 
         return false;
     }
@@ -48,15 +63,16 @@ public class CommandsService implements org.bukkit.command.CommandExecutor, TabC
 
         List<String> input = new ArrayList<>(Arrays.asList(args));
 
-        if (input.size() == 1)
-            commandExecutors.entrySet().stream()
-                    .filter(entry -> entry.getKey().hasPermission(sender))
-                    .forEach(entry -> entries.addAll(entry.getValue()));
-        else {
+        Stream<Map.Entry<CommandExecutor, List<String>>> allowedExecutors =
+                commandExecutors.entrySet().stream()
+                .filter(entry -> entry.getKey().hasPermission(sender));
+
+        if (input.size() == 1) {
+            allowedExecutors.forEach(entry -> entries.addAll(entry.getValue()));
+        } else {
             String trigger = input.remove(0);
 
-            commandExecutors.entrySet().stream()
-                    .filter(entry -> entry.getValue().contains(trigger))
+            allowedExecutors.filter(entry -> entry.getValue().contains(trigger))
                     .findFirst()
                     .ifPresent(entry -> entries.addAll(entry.getKey().tabComplete(sender, input)));
         }
