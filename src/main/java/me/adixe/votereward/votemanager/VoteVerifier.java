@@ -1,14 +1,11 @@
-package me.adixe.votereward.voteverifier;
+package me.adixe.votereward.votemanager;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.adixe.votereward.VoteReward;
-import me.adixe.votereward.utils.Configuration;
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitScheduler;
-import org.simpleyaml.configuration.file.YamlFile;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -19,33 +16,24 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 public class VoteVerifier {
-    private final String server;
+    private final Server server;
     private final String playerName;
 
-    public VoteVerifier(String server, String playerName) {
+    public VoteVerifier(Server server, String playerName) {
         this.server = server;
         this.playerName = playerName;
     }
 
     public void verify(VerificationListener listener) {
-        BukkitScheduler scheduler = Bukkit.getScheduler();
-
-        VoteReward voteReward = VoteReward.getInstance();
-
-        scheduler.runTaskAsynchronously(voteReward, () -> {
-            YamlFile settings = Configuration.get("settings");
-
+        Bukkit.getScheduler().runTaskAsynchronously(VoteReward.getInstance(), () -> {
             try {
-                String serverSettingsPath = "Servers." + server;
+                URL url = new URL(server.getAddress() + "/votes/server/" + server.getUuid());
 
-                String serverAddress = settings.getString(serverSettingsPath + ".Address");
-                String serverUuid = settings.getString(serverSettingsPath + ".Uuid");
-
-                URL url = new URL(serverAddress + "/votes/server/" + serverUuid);
+                JsonParser jsonParser = new JsonParser();
 
                 try (BufferedReader reader = new BufferedReader(
                         new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
-                    JsonArray entries = JsonParser.parseReader(reader).getAsJsonArray();
+                    JsonArray entries = jsonParser.parse(reader).getAsJsonArray();
 
                     LocalDate timeNow = LocalDate.now(ZoneId.of("Europe/Paris"));
 
