@@ -1,4 +1,4 @@
-package me.adixe.votereward.voteverifier;
+package me.adixe.votereward.votemanager;
 
 public interface VerificationListener {
     void success();

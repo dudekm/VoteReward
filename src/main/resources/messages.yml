@@ -1,0 +1,46 @@
+# __      __   _         _____                            _
+# \ \    / /  | |       |  __ \                          | |
+#  \ \  / /__ | |_ ___  | |__) |_____      ____ _ _ __ __| |
+#   \ \/ / _ \| __/ _ \ |  _  // _ \ \ /\ / / _` | '__/ _` |
+#    \  / (_) | ||  __/ | | \ \  __/\ V  V / (_| | | | (_| |
+#     \/ \___/ \__\___| |_|  \_\___| \_/\_/ \__,_|_|  \__,_|
+#
+# Reward players for voting for the server.
+#
+# Source code and documentation: https://github.com/dudekm/VoteReward
+#
+# Spigot: Adixe
+# Discord: adixepl
+# GitHub: AdixePL
+#
+commands:
+  unknown-command: '&cCommand "%trigger%" was not found.'
+  invalid-usage: '&cUse the correct syntax: %usage%.'
+  no-permission: '&cYou don''t have permission to use this command.'
+  no-arg-end: '&cEnd of arg "%arg%" was not found.'
+  check:
+    process-started:
+      self: '&aVerifying votes...'
+      other: '&aVerifying votes of &e%player_name%&a...'
+    success:
+      self: '&e%server_name%: &aThe vote has been granted.'
+      other: '&e%server_name%: &e%player_name%&a has granted the vote.'
+    not-found:
+      self: '&e%server_name%: &cVote not found.'
+      other: '&e%server_name%: &e%player_name%&c''s vote not found.'
+    exception-caught:
+      self: '&e%server_name%: &cAn error occurred while verifying vote: %exception%.'
+      other: '&e%server_name%: &cAn error occurred while verifying vote for &e%player_name%&c:
+        %exception%.'
+    player-not-found: '&cPlayer "%player%" was not found.'
+    no-player-given: '&cNo player given.'
+  reward:
+    header: '&aVerifying votes...'
+    success: '&e%server_name%: &aReward has been awarded.'
+    not-found: '&e%server_name%: &cNo vote found.'
+    already-voted: '&e%server_name%: &cReward has been awarded already.'
+    exception-caught: '&e%server_name%: &cAn error occurred while verifying vote:
+      %exception%.'
+    only-player: '&cThis command can be executed by the player.'
+  reload:
+    success: '&aConfiguration reloaded.'

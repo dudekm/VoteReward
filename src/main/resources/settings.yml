@@ -1,5 +1,10 @@
+# __      __   _         _____                            _
+# \ \    / /  | |       |  __ \                          | |
+#  \ \  / /__ | |_ ___  | |__) |_____      ____ _ _ __ __| |
+#   \ \/ / _ \| __/ _ \ |  _  // _ \ \ /\ / / _` | '__/ _` |
+#    \  / (_) | ||  __/ | | \ \  __/\ V  V / (_| | | | (_| |
+#     \/ \___/ \__\___| |_|  \_\___| \_/\_/ \__,_|_|  \__,_|
 #
-# VoteReward
 # Reward players for voting for the server.
 #
 # Source code and documentation: https://github.com/dudekm/VoteReward
@@ -8,40 +13,16 @@
 # Discord: adixepl
 # GitHub: AdixePL
 #
-Servers:
-  Server1:
-    Address: https://lista-serwerow.emecz.pl
-    Uuid: b23d452d-fbf1-47cf-a1d9-801a3e0bb516
-    RewardCommands:
+servers:
+  server1:
+    address: https://lista-serwerow.emecz.pl
+    uuid: b23d452d-fbf1-47cf-a1d9-801a3e0bb516
+    reward-commands:
       - xp add %player_name% 100
       - give %player_name% diamond
-  Server2:
-    Address: https://lista-minecraft.pl
-    Uuid: a5a29c24-6514-472d-add0-0b2be060e277
-    RewardCommands:
+  server2:
+    address: https://lista-minecraft.pl
+    uuid: a5a29c24-6514-472d-add0-0b2be060e277
+    reward-commands:
       - xp add %player_name% 100
       - give %player_name% emerald
-Commands:
-  UnknownCommand: '&cCommand %trigger% was not found.'
-  Check:
-    Header: '&aVerifying votes of %player_name%...'
-    Success: '&e%server_name%: &aVote has been granted.'
-    NotFound: '&e%server_name%: &cNo vote found.'
-    ExceptionCaught: '&e%server_name%: &cAn error occurred: %exception%.'
-    NoPlayerGiven: '&cNo player given.'
-    PlayerNotFound: '&cPlayer "%player%" was not found.'
-    NoPermission: '&cYou do not have permission to use this command.'
-    InvalidUsage: '&cUse the correct syntax: %usage%.'
-  Reward:
-    Header: '&aVerifying votes...'
-    Success: '&e%server_name%: &aReward has been awarded.'
-    NotFound: '&e%server_name%: &cNo vote found.'
-    AlreadyVoted: '&e%server_name%: &cReward has been awarded already.'
-    ExceptionCaught: '&e%server_name%: &cAn error occurred: %exception%.'
-    OnlyPlayer: '&cThis command can be executed by the player.'
-    NoPermission: '&cYou do not have permission to use this command.'
-    InvalidUsage: '&cUse the correct syntax: %usage%.'
-  Reload:
-    Success: '&aConfiguration file successfully reloaded.'
-    NoPermission: '&cYou do not have permission to use this command.'
-    InvalidUsage: '&cUse the correct syntax: %usage%.'
