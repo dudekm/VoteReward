@@ -29,10 +29,10 @@ public class VoteVerifier {
             try {
                 URL url = new URL(server.getAddress() + "/votes/server/" + server.getUuid());
 
-                JsonParser jsonParser = new JsonParser();
-
                 try (BufferedReader reader = new BufferedReader(
                         new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
+                    JsonParser jsonParser = new JsonParser();
+
                     JsonArray entries = jsonParser.parse(reader).getAsJsonArray();
 
                     LocalDate timeNow = LocalDate.now(ZoneId.of("Europe/Paris"));
