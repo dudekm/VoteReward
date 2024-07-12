@@ -2,36 +2,24 @@ package me.adixe.votereward.votemanager;
 
 import me.adixe.votereward.VoteReward;
 import org.simpleyaml.configuration.ConfigurationSection;
-import org.simpleyaml.configuration.file.YamlFile;
 
 import java.util.List;
 
-public class Server {
-    private final String name;
-
-    public Server(String name) {
-        this.name = name;
-    }
-
-    public String getAddress() {
+public record Server(String name) {
+    public String address() {
         return getSettings().getString("address");
     }
 
-    public String getUuid() {
+    public String uuid() {
         return getSettings().getString("uuid");
     }
 
-    public List<String> getRewardCommands() {
+    public List<String> rewardCommands() {
         return getSettings().getStringList("reward-commands");
     }
 
     private ConfigurationSection getSettings() {
-        YamlFile settings = VoteReward.getInstance().getConfiguration().get("settings");
-
-        return settings.getConfigurationSection("servers." + name);
-    }
-
-    public String getName() {
-        return name;
+        return VoteReward.getInstance().getConfiguration().get("settings")
+                .getConfigurationSection("servers." + name);
     }
 }

@@ -1,24 +1,23 @@
 package me.adixe.votereward.commands;
 
-import me.adixe.commonutilslib.commands.executors.CommandExecutor;
+import me.adixe.commonutilslib.command.CommandExecutor;
 import me.adixe.commonutilslib.configuration.SectionContainer;
 import me.adixe.votereward.VoteReward;
 import org.bukkit.command.CommandSender;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 public class ReloadCommand extends CommandExecutor {
-    public ReloadCommand(String permission, SectionContainer settingsContainer) {
-        super("reload",
-                Collections.emptyList(),
-                0, permission, settingsContainer);
+    public ReloadCommand(String name, String permission,
+                         SectionContainer settingsContainer) {
+        super(name, permission, settingsContainer, List.of(), 0);
     }
 
     @Override
-    protected void perform(CommandSender sender, Map<String, Object> argsValues) {
+    protected void execute(CommandSender sender, Map<String, Object> argsValues) {
         VoteReward plugin = VoteReward.getInstance();
 
         try {

@@ -1,69 +1,61 @@
 package me.adixe.votereward.commands;
 
-import me.adixe.commonutilslib.commands.CommandException;
-import me.adixe.commonutilslib.commands.executors.CommandExecutor;
+import me.adixe.commonutilslib.command.CommandException;
+import me.adixe.commonutilslib.command.CommandExecutor;
 import me.adixe.commonutilslib.configuration.SectionContainer;
-import me.adixe.commonutilslib.placeholders.PlaceholdersManager;
-import me.adixe.commonutilslib.placeholders.providers.PlaceholdersProvider;
+import me.adixe.commonutilslib.placeholder.PlaceholderManager;
 import me.adixe.votereward.VoteReward;
 import me.adixe.votereward.votemanager.Server;
 import me.adixe.votereward.votemanager.VerificationListener;
 import me.adixe.votereward.votemanager.VoteManager;
-import me.adixe.votereward.votemanager.VoteVerifier;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.simpleyaml.configuration.file.YamlFile;
 
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 public class RewardCommand extends CommandExecutor {
-    public RewardCommand(String permission, SectionContainer settingsContainer) {
-        super("reward",
-                Collections.emptyList(),
-                0, permission, settingsContainer);
+    public RewardCommand(String name, String permission,
+                         SectionContainer settingsContainer) {
+        super(name, permission, settingsContainer, List.of(), 0);
     }
 
     @Override
-    protected void perform(CommandSender sender, Map<String, Object> argsValues) throws CommandException {
-        if (!(sender instanceof Player)) {
+    protected void execute(CommandSender sender, Map<String, Object> argsValues) throws CommandException {
+        if (!(sender instanceof Player player)) {
             throw new CommandException("only-player");
         }
-
-        Player player = (Player) sender;
 
         VoteReward plugin = VoteReward.getInstance();
 
         YamlFile settings = plugin.getConfiguration().get("settings");
 
-        PlaceholdersManager placeholdersManager = plugin.getPlaceholdersManager();
+        PlaceholderManager placeholderManager = plugin.getPlaceholderManager();
 
         Map<String, String> placeholders = new HashMap<>(
-                placeholdersManager.get(Player.class).getUnique(player));
+                placeholderManager.get(Player.class).getUnique(player));
 
         sendMessage(sender, "header", placeholders);
 
-        VoteManager voteManager = plugin.getVoteManager();
-
-        PlaceholdersProvider<Server> serverProvider = placeholdersManager.get(Server.class);
-
         for (String serverKey : settings.getConfigurationSection("servers").getKeys(false)) {
+            VoteManager voteManager = plugin.getVoteManager();
+
             Server server = new Server(serverKey);
 
             Map<String, String> serverPlaceholders = new HashMap<>(placeholders);
-            serverPlaceholders.putAll(serverProvider.getUnique(server));
+            serverPlaceholders.putAll(placeholderManager.get(Server.class).getUnique(server));
 
-            VoteVerifier verifier = new VoteVerifier(server, sender.getName());
-
-            verifier.verify(new VerificationListener() {
+            voteManager.verifyAsync(server, player, new VerificationListener() {
                 @Override
                 public void success() {
-                    if (voteManager.rewardPlayer(player, server))
+                    if (voteManager.rewardPlayer(player, server)) {
                         sendMessage(sender, "success", serverPlaceholders);
-                    else
+                    } else {
                         sendMessage(sender, "already-voted", serverPlaceholders);
+                    }
                 }
 
                 @Override
