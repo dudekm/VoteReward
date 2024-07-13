@@ -12,6 +12,7 @@ import me.adixe.votereward.commands.RewardCommand;
 import me.adixe.votereward.placeholder.ServerProvider;
 import me.adixe.votereward.votemanager.VoteManager;
 import me.adixe.votereward.votemanager.verifier.LMVerifier;
+import me.adixe.votereward.votemanager.verifier.SMVerifier;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -89,6 +90,7 @@ public class VoteReward extends JavaPlugin {
     private void loadVoteManager() {
         voteManager = new VoteManager();
         voteManager.registerVerifier(new LMVerifier());
+        voteManager.registerVerifier(new SMVerifier());
     }
 
     private void loadMetrics() {
