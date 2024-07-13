@@ -3,7 +3,7 @@ Angielska wersja znajduje się [tutaj](README.md).
 # VoteReward
 
 VoteReward to plugin pod Spigot pozwalający na przyznawanie nagród graczom za głosowanie na serwer. Został stworzony pod
-wersje powyżej 1.13. Statystyki projektu dostępne na
+wersje powyżej 1.18. Statystyki projektu dostępne na
 stronie [bStats](https://bstats.org/plugin/bukkit/VoteReward/20120).
 
 # Instalacja
