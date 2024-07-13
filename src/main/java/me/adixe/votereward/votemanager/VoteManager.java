@@ -1,9 +1,11 @@
 package me.adixe.votereward.votemanager;
 
-import me.adixe.commonutilslib.placeholders.PlaceholdersManager;
+import me.adixe.commonutilslib.placeholder.PlaceholderManager;
+import me.adixe.commonutilslib.util.MessageUtil;
 import me.adixe.votereward.VoteReward;
+import me.adixe.votereward.votemanager.verifier.VoteVerifier;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.simpleyaml.configuration.file.YamlFile;
 
@@ -16,21 +18,57 @@ import java.util.List;
 import java.util.Map;
 
 public class VoteManager {
+    private final List<VoteVerifier> verifiers;
+
     public VoteManager() {
-        VoteReward plugin = VoteReward.getInstance();
+        this.verifiers = new ArrayList<>();
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            YamlFile votes = plugin.getConfiguration().get("votes");
+        Bukkit.getScheduler().runTaskTimerAsynchronously(
+                VoteReward.getInstance(), this::update, 0L, 20L * 60 * 10);
+    }
 
-            LocalDate timeNow = LocalDate.now(ZoneId.of("Europe/Paris"));
+    private void update() {
+        YamlFile votes = VoteReward.getInstance().getConfiguration().get("votes");
 
-            if (!votes.contains("date") || !LocalDate.parse(votes.getString("date"),
-                    DateTimeFormatter.ISO_LOCAL_DATE).isEqual(timeNow)) {
-                votes.set("date", timeNow.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        LocalDate timeNow = LocalDate.now(ZoneId.of("Europe/Paris"));
 
-                votes.set("votes", null);
+        if (!votes.contains("date") || !LocalDate.parse(votes.getString("date"),
+                DateTimeFormatter.ISO_LOCAL_DATE).isEqual(timeNow)) {
+            votes.set("date", timeNow.format(DateTimeFormatter.ISO_LOCAL_DATE));
+
+            votes.set("votes", null);
+        }
+    }
+
+    public void verify(Server server, OfflinePlayer player, VerificationListener listener) {
+        for (VoteVerifier verifier : verifiers) {
+            if (!verifier.canVerify(server)) {
+                continue;
             }
-        }, 0L, 20L * 60 * 10);
+
+            try {
+                if (verifier.verify(server, player)) {
+                    listener.success();
+                } else {
+                    listener.notFound();
+                }
+            } catch (Exception exception) {
+                listener.exceptionCaught(exception);
+            }
+
+            return;
+        }
+
+        throw new IllegalArgumentException("Invalid server address: " + server.address());
+    }
+
+    public void verifyAsync(Server server, OfflinePlayer player, VerificationListener listener) {
+        Bukkit.getScheduler().runTaskAsynchronously(VoteReward.getInstance(),
+                () -> verify(server, player, listener));
+    }
+
+    public void registerVerifier(VoteVerifier verifier) {
+        verifiers.add(verifier);
     }
 
     public boolean rewardPlayer(Player player, Server server) {
@@ -42,28 +80,24 @@ public class VoteManager {
 
         List<String> alreadyVotedServers = new ArrayList<>(votes.getStringList(playerPath));
 
-        String serverUuid = server.getUuid();
-
-        if (votes.contains(playerPath) &&
-                alreadyVotedServers.contains(serverUuid)) {
+        if (votes.contains(playerPath) && alreadyVotedServers.contains(server.uuid())) {
             return false;
         }
 
-        alreadyVotedServers.add(serverUuid);
+        alreadyVotedServers.add(server.uuid());
 
         votes.set(playerPath, alreadyVotedServers);
 
         Bukkit.getScheduler().runTask(plugin, () -> {
-            PlaceholdersManager placeholdersManager = plugin.getPlaceholdersManager();
+            PlaceholderManager placeholderManager = plugin.getPlaceholderManager();
 
             Map<String, String> placeholders = new HashMap<>();
-            placeholders.putAll(placeholdersManager.get(Player.class).getUnique(player));
-            placeholders.putAll(placeholdersManager.get(Server.class).getUnique(server));
+            placeholders.putAll(placeholderManager.get(Player.class).getUnique(player));
+            placeholders.putAll(placeholderManager.get(Server.class).getUnique(server));
 
-            CommandSender sender = Bukkit.getConsoleSender();
-
-            for (String command : server.getRewardCommands()) {
-                Bukkit.dispatchCommand(sender, PlaceholdersManager.translate(command, placeholders));
+            for (String command : server.rewardCommands()) {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(),
+                        MessageUtil.translate(command, placeholders));
             }
         });
 

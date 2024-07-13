@@ -1,71 +1,97 @@
 package me.adixe.votereward;
 
-import me.adixe.commonutilslib.commands.CommandsService;
+import me.adixe.commonutilslib.command.CommandService;
 import me.adixe.commonutilslib.configuration.Configuration;
 import me.adixe.commonutilslib.configuration.SectionContainer;
-import me.adixe.commonutilslib.placeholders.PlaceholdersManager;
-import me.adixe.commonutilslib.placeholders.providers.PlayerProvider;
+import me.adixe.commonutilslib.placeholder.PlaceholderManager;
+import me.adixe.commonutilslib.placeholder.provider.PlayerProvider;
+import me.adixe.commonutilslib.util.MessageUtil;
 import me.adixe.votereward.commands.CheckCommand;
 import me.adixe.votereward.commands.ReloadCommand;
 import me.adixe.votereward.commands.RewardCommand;
-import me.adixe.votereward.placeholders.ServerProvider;
+import me.adixe.votereward.placeholder.ServerProvider;
 import me.adixe.votereward.votemanager.VoteManager;
+import me.adixe.votereward.votemanager.verifier.LMVerifier;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.simpleyaml.configuration.file.YamlFile;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 public class VoteReward extends JavaPlugin {
     private static VoteReward instance;
 
     private Configuration configuration;
-    private PlaceholdersManager placeholdersManager;
+    private PlaceholderManager placeholderManager;
     private VoteManager voteManager;
 
     @Override
     public void onEnable() {
         instance = this;
 
+        loadConfiguration();
+
+        loadPlaceholders();
+
+        loadCommands();
+
+        loadVoteManager();
+
+        loadMetrics();
+
+        MessageUtil.registerAudiences(this);
+
+        getLogger().info("Enabled successfully.");
+    }
+
+    private void loadConfiguration() {
         configuration = new Configuration(this);
         configuration.registerFile("settings.yml", "settings.yml");
         configuration.registerFile("messages.yml", "messages.yml");
-        configuration.registerDataFile("votes.yml", 10);
+        configuration.registerDataFile("data/votes.yml", 10);
 
         try {
             configuration.reload();
         } catch (IOException exception) {
-            getLogger().log(Level.SEVERE,
-                    "An error occurred while loading configuration.",
-                    exception);
+            throw new RuntimeException(exception);
         }
+    }
 
-        placeholdersManager = new PlaceholdersManager();
-        placeholdersManager.register(new PlayerProvider());
-        placeholdersManager.register(new ServerProvider());
+    private void loadPlaceholders() {
+        placeholderManager = new PlaceholderManager();
+        placeholderManager.register(new PlayerProvider("player"));
+        placeholderManager.register(new ServerProvider("server"));
+    }
 
+    private void loadCommands() {
         SectionContainer commandsSettings = new SectionContainer(
                 configuration, "messages", "commands");
 
-        CommandsService commandsService = new CommandsService(
-                this, commandsSettings, "votereward");
-        commandsService.register(new RewardCommand(
+        CommandService commandService = new CommandService("votereward",
+                "votereward.command", commandsSettings, false);
+
+        commandService.register(new RewardCommand("reward",
                 "votereward.reward",
                 commandsSettings), "reward");
-        commandsService.register(new CheckCommand(
+        commandService.register(new CheckCommand("check",
                 "votereward.check",
                 commandsSettings), "check");
-        commandsService.register(new ReloadCommand(
+        commandService.register(new ReloadCommand("reload",
                 "votereward.reload",
                 commandsSettings), "reload");
 
-        voteManager = new VoteManager();
+        commandService.register(this);
+    }
 
+    private void loadVoteManager() {
+        voteManager = new VoteManager();
+        voteManager.registerVerifier(new LMVerifier());
+    }
+
+    private void loadMetrics() {
         Metrics metrics = new Metrics(this, 20120);
 
         metrics.addCustomChart(new AdvancedPie("siteAddress", () -> {
@@ -81,21 +107,15 @@ public class VoteReward extends JavaPlugin {
 
             return addresses;
         }));
-
-        PluginDescriptionFile description = getDescription();
-
-        getLogger().info(description.getName() + " v" + description.getVersion() + " by " +
-                String.join(", ", description.getAuthors()) + " enabled.");
     }
 
     @Override
     public void onDisable() {
-        configuration.saveAll();
+        configuration.save("votes");
 
-        PluginDescriptionFile description = getDescription();
+        MessageUtil.close();
 
-        getLogger().info(description.getName() + " v" + description.getVersion() + " by " +
-                String.join(", ", description.getAuthors()) + " disabled.");
+        getLogger().info("Disabled successfully.");
     }
 
     public static VoteReward getInstance() {
@@ -106,8 +126,8 @@ public class VoteReward extends JavaPlugin {
         return configuration;
     }
 
-    public PlaceholdersManager getPlaceholdersManager() {
-        return placeholdersManager;
+    public PlaceholderManager getPlaceholderManager() {
+        return placeholderManager;
     }
 
     public VoteManager getVoteManager() {
