@@ -46,7 +46,7 @@ public class CheckCommand extends CommandExecutor {
                 Map<String, String> serverPlaceholders = new HashMap<>(placeholders);
                 serverPlaceholders.putAll(placeholderManager.get(Server.class).getUnique(server));
 
-                plugin.getVoteManager().verify(server, player, new VerificationListener() {
+                plugin.getVoteManager().verifyAsync(server, player, new VerificationListener() {
                     @Override
                     public void success() {
                         sendMessage(sender, "success.other", serverPlaceholders);
@@ -79,7 +79,7 @@ public class CheckCommand extends CommandExecutor {
                 Map<String, String> serverPlaceholders = new HashMap<>(
                         placeholderManager.get(Server.class).getUnique(server));
 
-                plugin.getVoteManager().verify(server, (Player) sender, new VerificationListener() {
+                plugin.getVoteManager().verifyAsync(server, (Player) sender, new VerificationListener() {
                     @Override
                     public void success() {
                         sendMessage(sender, "success.self", serverPlaceholders);
