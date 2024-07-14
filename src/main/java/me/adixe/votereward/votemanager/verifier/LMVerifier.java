@@ -30,11 +30,9 @@ public class LMVerifier extends VoteVerifier {
 
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
-            JsonParser jsonParser = new JsonParser();
-
             LocalDate timeNow = LocalDate.now(ZoneId.of("Europe/Paris"));
 
-            for (JsonElement entry : jsonParser.parse(reader).getAsJsonArray()) {
+            for (JsonElement entry : JsonParser.parseReader(reader).getAsJsonArray()) {
                 JsonObject entryObject = entry.getAsJsonObject();
 
                 JsonElement nicknameElement = entryObject.get("nickname");
