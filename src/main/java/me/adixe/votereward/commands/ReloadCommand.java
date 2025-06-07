@@ -1,7 +1,7 @@
 package me.adixe.votereward.commands;
 
 import me.adixe.commonutilslib.command.CommandExecutor;
-import me.adixe.commonutilslib.configuration.SectionContainer;
+import me.adixe.commonutilslib.configuration.SectionHolder;
 import me.adixe.votereward.VoteReward;
 import org.bukkit.command.CommandSender;
 
@@ -11,9 +11,8 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class ReloadCommand extends CommandExecutor {
-    public ReloadCommand(String name, String permission,
-                         SectionContainer settingsContainer) {
-        super(name, permission, settingsContainer, List.of(), 0);
+    public ReloadCommand(String name, String permission, SectionHolder messagesHolder) {
+        super(name, permission, messagesHolder, List.of(), 0);
     }
 
     @Override
