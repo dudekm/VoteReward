@@ -3,24 +3,23 @@ package me.adixe.votereward.commands;
 import me.adixe.commonutilslib.command.CommandException;
 import me.adixe.commonutilslib.command.CommandExecutor;
 import me.adixe.commonutilslib.command.arg.PlayerArg;
-import me.adixe.commonutilslib.configuration.SectionContainer;
+import me.adixe.commonutilslib.configuration.Configuration;
+import me.adixe.commonutilslib.configuration.SectionHolder;
 import me.adixe.commonutilslib.placeholder.PlaceholderManager;
 import me.adixe.votereward.VoteReward;
-import me.adixe.votereward.votemanager.Server;
-import me.adixe.votereward.votemanager.VerificationListener;
+import me.adixe.votereward.vote.ServerHolder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.simpleyaml.configuration.ConfigurationSection;
 import org.simpleyaml.configuration.file.YamlFile;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 public class CheckCommand extends CommandExecutor {
-    public CheckCommand(String name, String permission,
-                        SectionContainer settingsContainer) {
-        super(name, permission, settingsContainer,
+    public CheckCommand(String name, String permission, SectionHolder messagesHolder) {
+        super(name, permission, messagesHolder,
                 List.of(new PlayerArg("player")), 0);
     }
 
@@ -38,70 +37,34 @@ public class CheckCommand extends CommandExecutor {
             Map<String, String> placeholders = new HashMap<>(
                     placeholderManager.get(Player.class).getUnique(player));
 
-            sendMessage(sender, "process-started.other", placeholders);
+            sendMessage(sender, "header.other", placeholders);
 
-            for (String serverKey : settings.getConfigurationSection("servers").getKeys(false)) {
-                Server server = new Server(serverKey);
+            for (ConfigurationSection serverSettings : Configuration.getSections(settings, "servers")) {
+                ServerHolder server = new ServerHolder(serverSettings);
 
                 Map<String, String> serverPlaceholders = new HashMap<>(placeholders);
-                serverPlaceholders.putAll(placeholderManager.get(Server.class).getUnique(server));
+                serverPlaceholders.putAll(placeholderManager.get(ServerHolder.class).getUnique(server));
 
-                plugin.getVoteManager().verifyAsync(server, player, new VerificationListener() {
-                    @Override
-                    public void success() {
-                        sendMessage(sender, "success.other", serverPlaceholders);
-                    }
-
-                    @Override
-                    public void notFound() {
-                        sendMessage(sender, "not-found.other", serverPlaceholders);
-                    }
-
-                    @Override
-                    public void exceptionCaught(Exception exception) {
-                        Map<String, String> exceptionPlaceholders = new HashMap<>(serverPlaceholders);
-                        exceptionPlaceholders.put("exception", exception.getMessage());
-
-                        sendMessage(sender, "exception-caught.other", exceptionPlaceholders);
-
-                        plugin.getLogger().log(Level.SEVERE,
-                                "An error occurred while checking vote.",
-                                exception);
-                    }
-                });
+                if (plugin.getVoteManager().isRewardGranted(player, server)) {
+                    sendMessage(sender, "success.other", serverPlaceholders);
+                } else {
+                    sendMessage(sender, "not-granted.other", serverPlaceholders);
+                }
             }
-        } else if (sender instanceof Player) {
-            sendMessage(sender, "process-started.self");
+        } else if (sender instanceof Player player) {
+            sendMessage(sender, "header.self");
 
-            for (String serverKey : settings.getConfigurationSection("servers").getKeys(false)) {
-                Server server = new Server(serverKey);
+            for (ConfigurationSection serverSettings : Configuration.getSections(settings, "servers")) {
+                ServerHolder server = new ServerHolder(serverSettings);
 
                 Map<String, String> serverPlaceholders = new HashMap<>(
-                        placeholderManager.get(Server.class).getUnique(server));
+                        placeholderManager.get(ServerHolder.class).getUnique(server));
 
-                plugin.getVoteManager().verifyAsync(server, (Player) sender, new VerificationListener() {
-                    @Override
-                    public void success() {
-                        sendMessage(sender, "success.self", serverPlaceholders);
-                    }
-
-                    @Override
-                    public void notFound() {
-                        sendMessage(sender, "not-found.self", serverPlaceholders);
-                    }
-
-                    @Override
-                    public void exceptionCaught(Exception exception) {
-                        Map<String, String> exceptionPlaceholders = new HashMap<>(serverPlaceholders);
-                        exceptionPlaceholders.put("exception", exception.getMessage());
-
-                        sendMessage(sender, "exception-caught.self", exceptionPlaceholders);
-
-                        plugin.getLogger().log(Level.SEVERE,
-                                "An error occurred while checking vote.",
-                                exception);
-                    }
-                });
+                if (plugin.getVoteManager().isRewardGranted(player, server)) {
+                    sendMessage(sender, "success.self", serverPlaceholders);
+                } else {
+                    sendMessage(sender, "not-granted.self", serverPlaceholders);
+                }
             }
         } else {
             throw new CommandException("no-player-given");
