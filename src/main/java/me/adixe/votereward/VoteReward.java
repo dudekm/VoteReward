@@ -2,16 +2,16 @@ package me.adixe.votereward;
 
 import me.adixe.commonutilslib.command.CommandService;
 import me.adixe.commonutilslib.configuration.Configuration;
-import me.adixe.commonutilslib.configuration.SectionContainer;
+import me.adixe.commonutilslib.configuration.SectionHolder;
 import me.adixe.commonutilslib.placeholder.PlaceholderManager;
-import me.adixe.commonutilslib.placeholder.provider.PlayerProvider;
+import me.adixe.commonutilslib.placeholder.PlayerProvider;
 import me.adixe.commonutilslib.util.MessageUtil;
 import me.adixe.votereward.commands.CheckCommand;
 import me.adixe.votereward.commands.ReloadCommand;
 import me.adixe.votereward.commands.RewardCommand;
-import me.adixe.votereward.placeholder.ServerProvider;
-import me.adixe.votereward.votemanager.VoteManager;
-import me.adixe.votereward.votemanager.verifier.LMVerifier;
+import me.adixe.votereward.placeholder.ServerHolderProvider;
+import me.adixe.votereward.vote.VoteManager;
+import me.adixe.votereward.vote.verifier.LMVerifier;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -63,32 +63,32 @@ public class VoteReward extends JavaPlugin {
     private void loadPlaceholders() {
         placeholderManager = new PlaceholderManager();
         placeholderManager.register(new PlayerProvider("player"));
-        placeholderManager.register(new ServerProvider("server"));
+        placeholderManager.register(new ServerHolderProvider("server"));
     }
 
     private void loadCommands() {
-        SectionContainer commandsSettings = new SectionContainer(
+        SectionHolder messagesHolder = new SectionHolder(
                 configuration, "messages", "commands");
 
         CommandService commandService = new CommandService("votereward",
-                "votereward.command", commandsSettings, false);
+                "votereward.command", messagesHolder, false);
 
         commandService.register(new RewardCommand("reward",
                 "votereward.reward",
-                commandsSettings), "reward");
+                messagesHolder), "reward");
         commandService.register(new CheckCommand("check",
                 "votereward.check",
-                commandsSettings), "check");
+                messagesHolder), "check");
         commandService.register(new ReloadCommand("reload",
                 "votereward.reload",
-                commandsSettings), "reload");
+                messagesHolder), "reload");
 
         commandService.register(this);
     }
 
     private void loadVoteManager() {
         voteManager = new VoteManager();
-        voteManager.registerVerifier(new LMVerifier());
+        voteManager.register(new LMVerifier());
     }
 
     private void loadMetrics() {

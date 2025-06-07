@@ -19,32 +19,28 @@ commands:
   invalid-usage: '<red>Use the correct syntax: %usage%.'
   no-permission: <red>You don't have permission to use this command.
   no-arg-end: <red>End of arg "%arg%" was not found.
-  check:
-    process-started:
-      self: <green>Verifying votes...
-      other: <green>Verifying votes of <yellow>%player_name%</yellow>...
-    success:
-      self: '<green><yellow>%server_name%</yellow>: The vote has been granted.'
-      other: '<green><yellow>%server_name%</yellow>: <yellow>%player_name%</yellow>
-        has granted the vote.'
-    not-found:
-      self: '<red><yellow>%server_name%</yellow>: Vote not found.'
-      other: '<red><yellow>%server_name%</yellow>: <yellow>%player_name%</yellow>''s
-        vote not found.'
-    exception-caught:
-      self: '<red><yellow>%server_name%</yellow>: An error occurred while verifying
-        vote: %exception%.'
-      other: '<red><yellow>%server_name%</yellow>: An error occurred while verifying
-        vote for <yellow>%player_name%</yellow>: %exception%.'
-    player-not-found: <red>Player "%player%" was not found.
-    no-player-given: <red>No player given.
   reward:
-    header: <green>Verifying votes...
+    process-started: <green>Verifying votes...
     success: '<green><yellow>%server_name%</yellow>: Reward has been awarded.'
     not-found: '<red><yellow>%server_name%</yellow>: No vote found.'
-    already-voted: '<red><yellow>%server_name%</yellow>: Reward has been awarded already.'
+    already-awarded: '<red><yellow>%server_name%</yellow>: Reward has been awarded
+      already.'
     exception-caught: '<red><yellow>%server_name%</yellow>: An error occurred while
       verifying vote: %exception%.'
     only-player: <red>This command can be executed by the player.
+  check:
+    header:
+      self: '<green>Your rewards for voting:'
+      other: '<green><yellow>%player_name%</yellow>''s rewards for voting:'
+    success:
+      self: '<green><yellow>%server_name%</yellow>: Reward has been awarded.'
+      other: '<green><yellow>%server_name%</yellow>: <yellow>%player_name%</yellow>''s
+        reward has been awarded.'
+    not-granted:
+      self: '<red><yellow>%server_name%</yellow>: Reward is not awarded.'
+      other: '<red><yellow>%server_name%</yellow>: <yellow>%player_name%</yellow>''s
+        reward is not awarded.'
+    player-not-found: <red>Player "%player%" was not found.
+    no-player-given: <red>No player given.
   reload:
     success: <green>Configuration reloaded.
