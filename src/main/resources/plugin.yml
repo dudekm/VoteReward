@@ -1,21 +1,29 @@
 name: VoteReward
 main: me.adixe.votereward.VoteReward
-version: 3.2.0
-api-version: 1.18
+version: '${project.version}'
+api-version: '1.18'
+folia-supported: true
 authors: [Adixe]
 description: Reward players for voting for the server.
-libraries:
-  - com.squareup.okhttp3:okhttp:4.12.0
+website: https://github.com/dudekm/VoteReward
 commands:
   votereward:
-    aliases:
-      - vr
+    description: Collect vote rewards and manage the plugin.
+    usage: /votereward [reward|check [player]|reload|poll]
+    aliases: [vr]
 permissions:
-  votereward.command:
-    default: true
   votereward.reward:
+    description: Collect your own vote rewards.
     default: true
   votereward.check:
+    description: See your own vote status for today.
+    default: true
+  votereward.check.others:
+    description: See another player's vote status.
     default: op
   votereward.reload:
+    description: Reload settings.yml and messages.yml.
+    default: op
+  votereward.poll:
+    description: Check the vote lists right now.
     default: op

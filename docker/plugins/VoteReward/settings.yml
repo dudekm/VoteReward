@@ -1,0 +1,11 @@
+# Development settings: the "mock" list is the WireMock container from compose.yaml.
+polling:
+  interval: 10s
+
+servers:
+  mock:
+    address: http://mock-api:8080
+    uuid: 183413bc-4588-4265-8f06-346963e5d7df
+    reward-commands:
+      - give %player_name% diamond
+      - say %player_name% voted on %server_name%

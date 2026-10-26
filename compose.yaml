@@ -1,0 +1,53 @@
+# Local development. See docs/development.md.
+#
+#   docker compose run --rm build          # tests + jar, copied to docker/plugins/
+#   docker compose up -d minecraft         # test server with the plugin + mock vote list
+#   docker compose logs -f minecraft
+#
+# Server type and version: MC_TYPE (PAPER, SPIGOT, PURPUR, FOLIA…), MC_VERSION (1.18.2 … 26.3),
+# MC_JAVA — the image's Java tag: java17 for 1.18–1.20.4, java21 for 1.20.5–1.21.x, java25 for 26.x.
+#   MC_TYPE=SPIGOT MC_VERSION=1.18.2 MC_JAVA=java17 docker compose up -d minecraft
+
+services:
+  build:
+    build: .
+    volumes:
+      - ./:/workspace
+      - maven-cache:/root/.m2
+    command: >
+      sh -c "mvn -B verify && cp target/VoteReward-*.jar docker/plugins/VoteReward.jar"
+
+  # Imitates GET /api/v1/servers/{uuid}/votes of the vote lists.
+  # Edit docker/mock-api/mappings/votes.json, then: curl -X POST localhost:8089/__admin/mappings/reset
+  mock-api:
+    image: wiremock/wiremock:3.13.1
+    command: ["--global-response-templating", "--verbose"]
+    ports:
+      - "8089:8080"
+    volumes:
+      - ./docker/mock-api:/home/wiremock
+
+  minecraft:
+    image: itzg/minecraft-server:${MC_JAVA:-java25}
+    depends_on:
+      - mock-api
+    environment:
+      EULA: "TRUE"
+      TYPE: ${MC_TYPE:-PAPER}
+      VERSION: ${MC_VERSION:-LATEST}
+      # Lets you join under the nickname from the mock vote (DevPlayer) without a Mojang account.
+      ONLINE_MODE: "FALSE"
+      MEMORY: 2G
+      # Copies docker/plugins (the jar and settings.yml pointing at the mock) into the server.
+      COPY_PLUGINS_SRC: /plugins
+    ports:
+      - "25565:25565"
+    volumes:
+      - ./docker/plugins:/plugins:ro
+      - minecraft-data:/data
+    stdin_open: true
+    tty: true
+
+volumes:
+  maven-cache:
+  minecraft-data:

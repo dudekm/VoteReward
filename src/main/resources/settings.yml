@@ -9,10 +9,20 @@
 #
 # Source code and documentation: https://github.com/dudekm/VoteReward
 #
-# Spigot: Adixe
-# Discord: adixepl
-# GitHub: AdixePL
-#
+
+polling:
+  # How often every list below is checked for new votes: 30s, 1m, 5m…
+  # Each check asks only for votes since the previous one. Minimum: 10s.
+  interval: 30s
+
+# The lists your server is on. The names (lista-minecraft…) are up to you, but must be unique.
+#   address          - the list's website
+#   uuid             - your server's ID on that list (last part of your server's page address)
+#   reward-commands  - console commands run for each vote. Placeholders:
+#                      %player_name%, %player_display_name%, %player_uuid%,
+#                      %server_name%, %server_address%
+# A player is rewarded at most once a day (UTC) per list. Players who are offline
+# when their vote is found get the reward the next time they join.
 servers:
   lista-minecraft:
     address: https://lista-minecraft.pl
