@@ -9,38 +9,25 @@
 #
 # Source code and documentation: https://github.com/dudekm/VoteReward
 #
-# Spigot: Adixe
-# Discord: adixepl
-# GitHub: AdixePL
-#
-commands:
-  missing-subcommand: <red>No command given.
-  unknown-command: <red>Command "%trigger%" was not found.
-  invalid-usage: '<red>Use the correct syntax: %usage%.'
-  no-permission: <red>You don't have permission to use this command.
-  no-arg-end: <red>End of arg "%arg%" was not found.
+# Colours: & codes (&a green, &c red, &e yellow, &l bold…). An empty message ('') is not sent.
+
+reward-received: '&aThanks for voting on &e%server_name%&a! Your reward has been given.'
+
+command:
+  usage: '&cUsage: /votereward [reward|check [player]|reload|poll]'
+  no-permission: '&cYou don''t have permission to use this command.'
+  only-player: '&cOnly a player can use this command.'
   reward:
-    process-started: <green>Verifying votes...
-    success: '<green><yellow>%server_name%</yellow>: Reward has been awarded.'
-    not-found: '<red><yellow>%server_name%</yellow>: No vote found.'
-    already-awarded: '<red><yellow>%server_name%</yellow>: Reward has been awarded
-      already.'
-    exception-caught: '<red><yellow>%server_name%</yellow>: An error occurred while
-      verifying vote: %exception%.'
-    only-player: <red>This command can be executed by the player.
+    none: '&cNo rewards are waiting for you. Votes are checked every &e%interval%&c — if you have just voted, try again in a moment.'
   check:
-    header:
-      self: '<green>Your rewards for voting:'
-      other: '<green><yellow>%player_name%</yellow>''s rewards for voting:'
-    success:
-      self: '<green><yellow>%server_name%</yellow>: Reward has been awarded.'
-      other: '<green><yellow>%server_name%</yellow>: <yellow>%player_name%</yellow>''s
-        reward has been awarded.'
-    not-granted:
-      self: '<red><yellow>%server_name%</yellow>: Reward is not awarded.'
-      other: '<red><yellow>%server_name%</yellow>: <yellow>%player_name%</yellow>''s
-        reward is not awarded.'
-    player-not-found: <red>Player "%player%" was not found.
-    no-player-given: <red>No player given.
+    no-player: '&cGive a player name: /votereward check <player>'
+    header: '&aVotes of &e%player_name% &atoday:'
+    rewarded: '&a- &e%server_name%&a: reward received.'
+    pending: '&e- %server_name%: reward waiting — use /votereward.'
+    not-voted: '&c- &e%server_name%&c: no vote yet.'
   reload:
-    success: <green>Configuration reloaded.
+    done: '&aConfiguration reloaded. Checking votes every &e%interval%&a.'
+    failed: '&cCould not reload the configuration — see the console. The previous one stays active.'
+  poll:
+    started: '&aChecking the vote lists...'
+    done: '&aChecked &e%checked%&a list(s) (&e%failed%&a failed), read &e%votes%&a vote(s), &e%rewards%&a new reward(s).'

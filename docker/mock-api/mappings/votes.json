@@ -1,0 +1,31 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/api/v1/servers/[0-9a-fA-F-]+/votes"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/ld+json; charset=utf-8"
+    },
+    "jsonBody": {
+      "@context": "/api/v1/contexts/Vote",
+      "@id": "/api/v1/servers/00000000-0000-0000-0000-000000000000/votes",
+      "@type": "Collection",
+      "totalItems": 1,
+      "member": [
+        {
+          "@id": "/api/v1/votes/7d4c3f8e-0000-4000-8000-000000000001",
+          "@type": "Vote",
+          "uuid": "7d4c3f8e-0000-4000-8000-000000000001",
+          "nickname": "DevPlayer",
+          "createdAt": "{{now}}"
+        }
+      ],
+      "view": {
+        "@id": "/api/v1/servers/00000000-0000-0000-0000-000000000000/votes",
+        "@type": "PartialCollectionView"
+      }
+    }
+  }
+}
